@@ -20,9 +20,9 @@ end
 * fpga side (refer to test003_fpga_to_soc_cfg_read)
 ```verilog=
 begin
-@ (posedge fpga_coreclk);
+  @ (posedge fpga_coreclk);
     fpga_axilite_write_req(28'h5000, 4'b1, 32'b1);
-repeat(100)@(posedge soc_coreclk);
+  repeat(100)@(posedge soc_coreclk);
 end
 ```
 2. Briefly describe how you do FIR initialization (tap parameter, length) from SOC side (Test#1).
