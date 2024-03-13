@@ -17,7 +17,7 @@ begin
     @(posedge soc_coreclk);
 end
 ```
-* fpga side (refer to test006_fpga_to_soc_cfg_read)
+* fpga side (refer to test006_fpga_to_soc_cfg_write)
 ```verilog=
 begin
   @ (posedge fpga_coreclk);
