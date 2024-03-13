@@ -42,38 +42,38 @@ module tb_fsic #( parameter BITS=32,
 	)
 (
 );
-		localparam UP_BASE=32'h3000_0000;
-		localparam AA_BASE=32'h3000_2000;
-		localparam IS_BASE=32'h3000_3000;
+	localparam UP_BASE=32'h3000_0000;
+	localparam AA_BASE=32'h3000_2000;
+	localparam IS_BASE=32'h3000_3000;
 
-		localparam SOC_to_FPGA_MailBox_Base=28'h000_2000;
-		localparam FPGA_to_SOC_UP_BASE=28'h000_0000;
-		localparam FPGA_to_SOC_AA_BASE=28'h000_2000;
-		localparam FPGA_to_SOC_IS_BASE=28'h000_3000;
+	localparam SOC_to_FPGA_MailBox_Base=28'h000_2000;
+	localparam FPGA_to_SOC_UP_BASE=28'h000_0000;
+	localparam FPGA_to_SOC_AA_BASE=28'h000_2000;
+	localparam FPGA_to_SOC_IS_BASE=28'h000_3000;
 
-		localparam AA_MailBox_Reg_Offset=12'h000;
-		localparam AA_Internal_Reg_Offset=12'h100;
+	localparam AA_MailBox_Reg_Offset=12'h000;
+	localparam AA_Internal_Reg_Offset=12'h100;
 
-		localparam TUSER_AXIS = 2'b00;
-		localparam TUSER_AXILITE_WRITE = 2'b01;
-		localparam TUSER_AXILITE_READ_REQ = 2'b10;
-		localparam TUSER_AXILITE_READ_CPL = 2'b11;
+	localparam TUSER_AXIS = 2'b00;
+	localparam TUSER_AXILITE_WRITE = 2'b01;
+	localparam TUSER_AXILITE_READ_REQ = 2'b10;
+	localparam TUSER_AXILITE_READ_CPL = 2'b11;
 
-		localparam TID_DN_UP = 2'b00;
-		localparam TID_DN_AA = 2'b01;
-		localparam TID_UP_UP = 2'b00;
-		localparam TID_UP_AA = 2'b01;
-		localparam TID_UP_LA = 2'b10;
-		localparam fpga_axis_test_length = 64;
-		localparam BASE_OFFSET = 8;
-		localparam RXD_OFFSET = BASE_OFFSET;
-		localparam RXCLK_OFFSET = RXD_OFFSET + pSERIALIO_WIDTH;
-		localparam TXD_OFFSET = RXCLK_OFFSET + 1;
-		localparam TXCLK_OFFSET = TXD_OFFSET + pSERIALIO_WIDTH;
-		localparam IOCLK_OFFSET = TXCLK_OFFSET + 1;
-		localparam TXRX_WIDTH = IOCLK_OFFSET - BASE_OFFSET + 1;
+	localparam TID_DN_UP = 2'b00;
+	localparam TID_DN_AA = 2'b01;
+	localparam TID_UP_UP = 2'b00;
+	localparam TID_UP_AA = 2'b01;
+	localparam TID_UP_LA = 2'b10;
+	localparam fpga_axis_test_length = 64;
+	localparam BASE_OFFSET = 8;
+	localparam RXD_OFFSET = BASE_OFFSET;
+	localparam RXCLK_OFFSET = RXD_OFFSET + pSERIALIO_WIDTH;
+	localparam TXD_OFFSET = RXCLK_OFFSET + 1;
+	localparam TXCLK_OFFSET = TXD_OFFSET + pSERIALIO_WIDTH;
+	localparam IOCLK_OFFSET = TXCLK_OFFSET + 1;
+	localparam TXRX_WIDTH = IOCLK_OFFSET - BASE_OFFSET + 1;
 
-    real ioclk_pd = IOCLK_Period;
+	real ioclk_pd = IOCLK_Period;
 
   wire           wb_rst;
   wire           wb_clk;
@@ -87,10 +87,10 @@ module tb_fsic #( parameter BITS=32,
   reg  [127: 0] la_oenb;
   wire   [37: 0] io_in;
   `ifdef USE_POWER_PINS
-  reg           vccd1;
-  reg           vccd2;
-  reg           vssd1;
-  reg           vssd2;
+		reg           vccd1;
+		reg           vccd2;
+		reg           vssd1;
+		reg           vssd2;
   `endif //USE_POWER_PINS
   reg           user_clock2;
   reg           ioclk_source;
@@ -434,7 +434,7 @@ FSIC #(
     end
 
 	//WB Master wb_ack_o handling
-	always @( posedge wb_clk or posedge wb_rst) begin
+	always @ ( posedge wb_clk or posedge wb_rst) begin
 		if (wb_rst) begin
 			wbs_adr <= 32'h0;
 			wbs_wdata <= 32'h0;
@@ -506,7 +506,6 @@ FSIC #(
 
 	task soc_init_fir;
 		$display("soc_fir: initialize fir from soc side");
-
 		fsic_system_initial();
 		soc_change_user_prj();
 		soc_check_idle();
@@ -515,6 +514,7 @@ FSIC #(
 		soc_check_data_length();
 		soc_check_tap_data();
 		soc_fir_start();
+		mailbox_check();
 	endtask
 
 	task fsic_system_initial;
@@ -547,7 +547,6 @@ FSIC #(
 			$display($time, "=> soc txen_ctl=1");
 			$display($time, "=> fpga txen_ctl=1");
 			#200;
-			// fpga_as_is_tdata = 32'h5a5a5a5a;
 			#40;
 
 			$display("-----------------");
@@ -569,7 +568,7 @@ FSIC #(
 		$display("-----------------");
 	endtask
 
-		task soc_change_user_prj_write;
+	task soc_change_user_prj_write;
 		begin
 			@ (posedge soc_coreclk);
 			wbs_adr <= 32'h3000_5000;
@@ -580,9 +579,9 @@ FSIC #(
 			wbs_stb <= 1'b1;
 			wbs_we <= 1'b1;
 
-			@(posedge soc_coreclk);
-			while(wbs_ack==0) begin
-				@(posedge soc_coreclk);
+			@ (posedge soc_coreclk);
+			while(wbs_ack == 0) begin
+				@ (posedge soc_coreclk);
 			end
 
 			$display($time, "=> soc_cfg_write : wbs_adr=%x, wbs_sel=%b, wbs_wdata=%x", wbs_adr, wbs_sel, wbs_wdata);
@@ -599,14 +598,14 @@ FSIC #(
 			wbs_stb <= 1'b1;
 			wbs_we <= 1'b0;
 
-			@(posedge soc_coreclk);
-			while(wbs_ack==0) begin
-				@(posedge soc_coreclk);
+			@ (posedge soc_coreclk);
+			while(wbs_ack == 0) begin
+				@ (posedge soc_coreclk);
 			end
 
 			$display($time, "=> soc_cfg_read : wbs_adr=%x, wbs_sel=%b", wbs_adr, wbs_sel);
 			//#1;		//add delay to make sure cfg_read_data_captured get the correct data
-			@(soc_cfg_read_event);
+			@ (soc_cfg_read_event);
 			$display($time, "=> soc_cfg_read : got soc_cfg_read_event");
 		end
 	endtask
@@ -625,7 +624,6 @@ FSIC #(
 		$display("send_data_length: send data length");
 		begin
 			soc_up_cfg_write(12'h10, 4'b1, fpga_axis_test_length);
-
 			// $display($time, "=> send_data_length : wbs_adr=%x, wbs_sel=%b, wbs_wdata=%x", wbs_adr, wbs_sel, wbs_wdata);
 			$display("-----------------");
 		end
@@ -681,12 +679,27 @@ FSIC #(
 		begin
 			$display("fir_start: set ap_start");
 			begin
-
 				soc_up_cfg_write(12'h0, 4'b1, 32'b1);
-
 				// $display($time, "=> fir_start : wbs_adr=%x, wbs_sel=%b, wbs_wdata=%x", wbs_adr, wbs_sel, wbs_wdata);
 				$display("-----------------");
 			end
+		end
+	endtask
+
+	task mailbox_check;
+		begin
+			$display("mailbox_check: mailbox check");
+			do begin
+				soc_to_fpga_mailbox_write_addr_expect_value =  SOC_to_FPGA_MailBox_Base;
+				soc_to_fpga_mailbox_write_addr_BE_expect_value = 4'b1111;
+				soc_to_fpga_mailbox_write_data_expect_value = 32'ha5a5_a5a5;
+				soc_aa_cfg_write(SOC_to_FPGA_MailBox_Base[11:0], soc_to_fpga_mailbox_write_addr_BE_expect_value, soc_to_fpga_mailbox_write_data_expect_value);
+				@ (soc_to_fpga_mailbox_write_event);
+				$display($time, "=> mailbox_check : got soc_to_fpga_mailbox_write_event");
+			end while(soc_to_fpga_mailbox_write_addr_expect_value !== soc_to_fpga_mailbox_write_addr_captured[27:0] &&
+								soc_to_fpga_mailbox_write_addr_BE_expect_value !== soc_to_fpga_mailbox_write_addr_captured[31:28] &&
+								soc_to_fpga_mailbox_write_data_expect_value !== soc_to_fpga_mailbox_write_data_captured);
+			$display("-----------------");
 		end
 	endtask
 
@@ -718,7 +731,7 @@ FSIC #(
 				fpga_axis_req(i, TID_DN_UP, 0);
 			end
 			$display($time, "=> wait for soc_to_fpga_axis_event");
-			@(soc_to_fpga_axis_event);
+			@ (soc_to_fpga_axis_event);
 			$display($time, "=> soc_to_fpga_axis_expect_count = %d", soc_to_fpga_axis_expect_count);
 			$display($time, "=> soc_to_fpga_axis_captured_count = %d", soc_to_fpga_axis_captured_count);
 			$display("-----------------");
@@ -782,8 +795,8 @@ FSIC #(
 		begin
 			//step 1. fpga issue fpga to soc cfg write request
 			@ (posedge fpga_coreclk);
-				fpga_axilite_write_req(28'h5000, 4'b1, 32'b1);
-				//step 2. fpga wait for write to soc
+			fpga_axilite_write_req(28'h5000, 4'b1, 32'b1);
+			//step 2. fpga wait for write to soc
 			repeat(100) @ (posedge soc_coreclk);
 		end
 	endtask
@@ -797,7 +810,7 @@ FSIC #(
 			fpga_axilite_read_req(32'h3000_5000);
 			//step 2. fpga wait for read completion from soc
 			$display($time, "=> fpga_change_user_prj_read :wait for soc_to_fpga_axilite_read_cpl_event");
-			@(soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
+			@ (soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
 			$display($time, "=> fpga_change_user_prj_read : got soc_to_fpga_axilite_read_cpl_event");
 			$display($time, "=> fpga_change_user_prj_read : soc_to_fpga_axilite_read_cpl_captured=%x", soc_to_fpga_axilite_read_cpl_captured);
 		end
@@ -810,11 +823,10 @@ FSIC #(
 				@ (posedge fpga_coreclk);
 				fpga_as_is_tready <= 1;
 				//step 1. fpga issue cfg read request to soc
-				soc_to_fpga_axilite_read_cpl_expect_value = 32'b1;
 				fpga_axilite_read_req(UP_BASE);
 				//step 2. fpga wait for read completion from soc
 				$display($time, "=> fpga_change_user_prj_read :wait for soc_to_fpga_axilite_read_cpl_event");
-				@(soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
+				@ (soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
 				$display($time, "=> fpga_change_user_prj_read : got soc_to_fpga_axilite_read_cpl_event");
 				$display($time, "=> fpga_change_user_prj_read : soc_to_fpga_axilite_read_cpl_captured=%x", soc_to_fpga_axilite_read_cpl_captured);
 			end	while (soc_to_fpga_axilite_read_cpl_captured[2] !== 1'b1);
@@ -826,7 +838,7 @@ FSIC #(
 		$display("send_data_length: send data length");
 		begin
 			//step 1. fpga issue fpga to soc cfg write request
-			@(posedge fpga_coreclk);
+			@ (posedge fpga_coreclk);
 			fpga_axilite_write_req(28'h10, 4'b1, fpga_axis_test_length);
 			//step 2. fpga wait for write to soc
 			repeat(100) @ (posedge soc_coreclk);
@@ -840,7 +852,7 @@ FSIC #(
 			for (i = 0; i < 11; i = i + 1) begin
 				//step 1. fpga issue fpga to soc cfg write request
 				@ (posedge fpga_coreclk);
-					fpga_axilite_write_req(28'h20 + (i << 2), 4'b1111, tap[i]);
+				fpga_axilite_write_req(28'h20 + (i << 2), 4'b1111, tap[i]);
 				//step 2. fpga wait for write to soc
 				repeat(100) @ (posedge soc_coreclk);
 			end
@@ -858,7 +870,7 @@ FSIC #(
 			fpga_axilite_read_req(UP_BASE + 32'h10);
 			//step 2. fpga wait for read completion from soc
 			$display($time, "=> fpga_change_user_prj_read :wait for soc_to_fpga_axilite_read_cpl_event");
-			@(soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
+			@ (soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
 			$display($time, "=> fpga_change_user_prj_read : got soc_to_fpga_axilite_read_cpl_event");
 			$display($time, "=> fpga_change_user_prj_read : soc_to_fpga_axilite_read_cpl_captured=%x", soc_to_fpga_axilite_read_cpl_captured);
 
@@ -885,7 +897,7 @@ FSIC #(
 				fpga_axilite_read_req(UP_BASE + 32'h20 + (i << 2));
 				//step 2. fpga wait for read completion from soc
 				$display($time, "=> fpga_change_user_prj_read :wait for soc_to_fpga_axilite_read_cpl_event");
-				@(soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
+				@ (soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
 				$display($time, "=> fpga_change_user_prj_read : got soc_to_fpga_axilite_read_cpl_event");
 				$display($time, "=> fpga_change_user_prj_read : soc_to_fpga_axilite_read_cpl_captured=%x", soc_to_fpga_axilite_read_cpl_captured);
 				check_cnt = check_cnt + 1;
@@ -925,7 +937,7 @@ FSIC #(
 			fpga_axilite_read_req(UP_BASE);
 			//step 2. fpga wait for read completion from soc
 			$display($time, "=> fpga_change_user_prj_read :wait for soc_to_fpga_axilite_read_cpl_event");
-			@(soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
+			@ (soc_to_fpga_axilite_read_cpl_event);		//wait for fpga get the read cpl.
 			$display($time, "=> fpga_change_user_prj_read : got soc_to_fpga_axilite_read_cpl_event");
 			$display($time, "=> fpga_change_user_prj_read : soc_to_fpga_axilite_read_cpl_captured=%x", soc_to_fpga_axilite_read_cpl_captured);
 			check_cnt = check_cnt + 1;
@@ -942,8 +954,8 @@ FSIC #(
 
 	initial begin		//get soc wishbone read data result.
 		while (1) begin
-			@(posedge soc_coreclk);
-			if (wbs_ack==1 && wbs_we == 0) begin
+			@ (posedge soc_coreclk);
+			if (wbs_ack == 1 && wbs_we == 0) begin
 				//$display($time, "=> get wishbone read data result be : cfg_read_data_captured =%x, wbs_rdata=%x", cfg_read_data_captured, wbs_rdata);
 				cfg_read_data_captured = wbs_rdata ;		//use block assignment
 				//$display($time, "=> get wishbone read data result af : cfg_read_data_captured =%x, wbs_rdata=%x", cfg_read_data_captured, wbs_rdata);
@@ -957,7 +969,7 @@ FSIC #(
 	initial begin		//when soc cfg write to AA, then AA in soc generate soc_to_fpga_mailbox_write,
 	  stream_data_addr_or_data = 0;
 		while (1) begin
-			@(posedge fpga_coreclk);
+			@ (posedge fpga_coreclk);
 			//New AA version, all stream data with last = 1.
 			if (fpga_is_as_tvalid == 1 && fpga_is_as_tid == TID_UP_AA && fpga_is_as_tuser == TUSER_AXILITE_WRITE && fpga_is_as_tlast == 1) begin
 
@@ -984,7 +996,7 @@ FSIC #(
 
 	initial begin		//get upstream soc_to_fpga_axilite_read_completion
 		while (1) begin
-			@(posedge fpga_coreclk);
+			@ (posedge fpga_coreclk);
 			if (fpga_is_as_tvalid == 1 && fpga_is_as_tid == TID_UP_AA && fpga_is_as_tuser == TUSER_AXILITE_READ_CPL) begin
 				$display($time, "=> get soc_to_fpga_axilite_read_cpl_captured be : soc_to_fpga_axilite_read_cpl_captured =%x, fpga_is_as_tdata=%x", soc_to_fpga_axilite_read_cpl_captured, fpga_is_as_tdata);
 				soc_to_fpga_axilite_read_cpl_captured = fpga_is_as_tdata ;		//use block assignment
@@ -998,10 +1010,10 @@ FSIC #(
     reg soc_to_fpga_axis_event_triggered;
 
 	initial begin		//get upstream soc_to_fpga_axis - for loop back test
-        soc_to_fpga_axis_captured_count = 0;
-        soc_to_fpga_axis_event_triggered = 0;
+		soc_to_fpga_axis_captured_count = 0;
+		soc_to_fpga_axis_event_triggered = 0;
 		while (1) begin
-			@(posedge fpga_coreclk);
+			@ (posedge fpga_coreclk);
 			`ifdef USER_PROJECT_SIDEBAND_SUPPORT
 				if (fpga_is_as_tvalid == 1 && fpga_is_as_tid == TID_UP_UP && fpga_is_as_tuser == TUSER_AXIS) begin
 					// $display($time, "=> get soc_to_fpga_axis be : soc_to_fpga_axis_captured_count=%d,  soc_to_fpga_axis_captured[%d] =%x, fpga_is_as_tupsb=%x, fpga_is_as_tstrb=%x, fpga_is_as_tkeep=%x , fpga_is_as_tlast=%x, fpga_is_as_tdata=%x", soc_to_fpga_axis_captured_count, soc_to_fpga_axis_captured_count, soc_to_fpga_axis_captured[soc_to_fpga_axis_captured_count], fpga_is_as_tupsb, fpga_is_as_tstrb, fpga_is_as_tkeep , fpga_is_as_tlast, fpga_is_as_tdata);
@@ -1310,9 +1322,9 @@ FSIC #(
 			wbs_stb <= 1'b1;
 			wbs_we <= 1'b1;
 
-			@(posedge soc_coreclk);
-			while(wbs_ack==0) begin
-				@(posedge soc_coreclk);
+			@ (posedge soc_coreclk);
+			while(wbs_ack == 0) begin
+				@ (posedge soc_coreclk);
 			end
 
 			$display($time, "=> soc_is_cfg_write : wbs_adr=%x, wbs_sel=%b, wbs_wdata=%x", wbs_adr, wbs_sel, wbs_wdata);
@@ -1333,14 +1345,14 @@ FSIC #(
 			wbs_stb <= 1'b1;
 			wbs_we <= 1'b0;
 
-			@(posedge soc_coreclk);
-			while(wbs_ack==0) begin
-				@(posedge soc_coreclk);
+			@ (posedge soc_coreclk);
+			while(wbs_ack == 0) begin
+				@ (posedge soc_coreclk);
 			end
 
 			$display($time, "=> soc_is_cfg_read : wbs_adr=%x, wbs_sel=%b", wbs_adr, wbs_sel);
 			//#1;		//add delay to make sure cfg_read_data_captured get the correct data
-			@(soc_cfg_read_event);
+			@ (soc_cfg_read_event);
 			$display($time, "=> soc_is_cfg_read : got soc_cfg_read_event");
 		end
 	endtask
@@ -1361,9 +1373,9 @@ FSIC #(
 			wbs_stb <= 1'b1;
 			wbs_we <= 1'b1;
 
-			@(posedge soc_coreclk);
-			while(wbs_ack==0) begin
-				@(posedge soc_coreclk);
+			@ (posedge soc_coreclk);
+			while(wbs_ack == 0) begin
+				@ (posedge soc_coreclk);
 			end
 
 			$display($time, "=> soc_aa_cfg_write : wbs_adr=%x, wbs_sel=%b, wbs_wdata=%x", wbs_adr, wbs_sel, wbs_wdata);
@@ -1384,13 +1396,13 @@ FSIC #(
 			wbs_stb <= 1'b1;
 			wbs_we <= 1'b0;
 
-			@(posedge soc_coreclk);
-			while(wbs_ack==0) begin
-				@(posedge soc_coreclk);
+			@ (posedge soc_coreclk);
+			while(wbs_ack == 0) begin
+				@ (posedge soc_coreclk);
 			end
 			$display($time, "=> soc_aa_cfg_read : wbs_adr=%x, wbs_sel=%b", wbs_adr, wbs_sel);
 			//#1;		//add delay to make sure cfg_read_data_captured get the correct data
-			@(soc_cfg_read_event);
+			@ (soc_cfg_read_event);
 			$display($time, "=> soc_aa_cfg_read : got soc_cfg_read_event");
 		end
 	endtask
@@ -1411,9 +1423,9 @@ FSIC #(
 			wbs_stb <= 1'b1;
 			wbs_we <= 1'b1;
 
-			@(posedge soc_coreclk);
-			while(wbs_ack==0) begin
-				@(posedge soc_coreclk);
+			@ (posedge soc_coreclk);
+			while(wbs_ack == 0) begin
+				@ (posedge soc_coreclk);
 			end
 
 			$display($time, "=> soc_up_cfg_write : wbs_adr=%x, wbs_sel=%b, wbs_wdata=%x", wbs_adr, wbs_sel, wbs_wdata);
@@ -1434,14 +1446,14 @@ FSIC #(
 			wbs_stb <= 1'b1;
 			wbs_we <= 1'b0;
 
-			@(posedge soc_coreclk);
-			while(wbs_ack==0) begin
-				@(posedge soc_coreclk);
+			@ (posedge soc_coreclk);
+			while(wbs_ack == 0) begin
+				@ (posedge soc_coreclk);
 			end
 
 			$display($time, "=> soc_up_cfg_read : wbs_adr=%x, wbs_sel=%b", wbs_adr, wbs_sel);
 			//#1;		//add delay to make sure cfg_read_data_captured get the correct data
-			@(soc_cfg_read_event);
+			@ (soc_cfg_read_event);
 			$display($time, "=> soc_up_cfg_read : got soc_cfg_read_event");
 		end
 	endtask
