@@ -1,3 +1,18 @@
+# FSIC-SIM - Integrate fir into FSIC
+
+## Step1. FIR initialization
+### Send tap data and data length and check it from both SoC and FPGA 
+
+## Setp2. FIR data X stream in:
+### Send data X stream in from FPGA to FIR
+
+## Step3. FIR data Y stream out
+### Receive data Y stream out from FIR to FPGA
+## Step4. Check data Y
+### Verify the data Y output
+
+## Report
+
 1. Show the code that you use to program configuration address [‘h3000_5000]
 
 * soc side (refer to soc_up_cfg_write)
