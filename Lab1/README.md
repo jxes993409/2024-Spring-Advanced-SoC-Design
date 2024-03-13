@@ -35,7 +35,7 @@ end
     2. To ensure fpga write to soc is completed, use **repeat(100)@(posedge soc_coreclk)**.
 
 4. Briefly describe how you feed in X data from FPGA side.
-    1.	When fpga_coreclk at posedge, set **fpga_as_is_tready = 1**.
+    1.	When **fpga_coreclk at posedge**, set **fpga_as_is_tready = 1**.
     2.	Use **fpga_axis_req(i, TID_DN_UP, 0)** in for loop from **i = 0 ~ 63**.
 
 5. Briefly describe how you get output Y data in testbench, and how to do comparison with golden values.
