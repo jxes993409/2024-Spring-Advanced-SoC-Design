@@ -3,7 +3,7 @@
 ## Step1. FIR initialization
 ### Send tap data and data length and check it from both SoC and FPGA 
 
-## Setp2. FIR data X stream in:
+## Step2. FIR data X stream in:
 ### Send data X stream in from FPGA to FIR
 
 ## Step3. FIR data Y stream out
