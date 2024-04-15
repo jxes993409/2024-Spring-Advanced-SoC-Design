@@ -8,4 +8,4 @@
 
 | Input                                                                                                   |                                                  Output                                                  |
 | ------------------------------------------------------------------------------------------------------- |:--------------------------------------------------------------------------------------------------------:|
-| ![image](https://github.com/jxes993409/2024-Spring-Advanced-SoC-Design/tree/main/Lab2/images/input.png) | ![image](https://github.com/jxes993409/2024-Spring-Advanced-SoC-Design/tree/main/Lab2/images/output.png) |
+| ![image](https://github.com/jxes993409/2024-Spring-Advanced-SoC-Design/blob/main/Lab2/images/input.png) | ![image](https://github.com/jxes993409/2024-Spring-Advanced-SoC-Design/blob/main/Lab2/images/output.png) |
